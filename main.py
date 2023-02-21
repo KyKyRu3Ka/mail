@@ -1,6 +1,6 @@
 from core.email.email import *
 
-target = 'bro.maps@ya.ru'
+target = 'leksikov678@gmail.com'
 threads = 1
 message = 'Good Day!'
 subj = 'Alert'
