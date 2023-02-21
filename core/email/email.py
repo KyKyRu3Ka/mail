@@ -17,10 +17,10 @@ def email_attack(email, mes, subj):
     for em in emails:
         if em.find('@yahoo.com') != -1:
             smtp = 'smtp.mail.yahoo.com'
+            port = 465
         elif em.find('@mail.ru') != -1:
             smtp = 'smtp.mail.ru'
-        elif em.find('@ya.ru') or em.find('@yandex.ru') != -1:
-            smtp = 'smpt.yandex.ru'
+            port = 587
         else:
             smtp = 'smtp.rembler.ru'
 
