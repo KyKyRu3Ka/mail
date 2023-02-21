@@ -1,4 +1,4 @@
-import smtplib as sl
+import smtplib
 import os, ssl
 
 
@@ -19,6 +19,8 @@ def email_attack(email, mes, subj):
             smtp = 'smtp.mail.yahoo.com'
         elif em.find('@mail.ru') != -1:
             smtp = 'smtp.mail.ru'
+        elif em.find('@ya.ru') or em.find('@yandex.ru') != -1:
+            smtp = 'smpt.yandex.ru'
         else:
             smtp = 'smtp.rembler.ru'
 
@@ -35,12 +37,9 @@ def email_attack(email, mes, subj):
         body = "\r\n".join((f"From: {from_email}", f"To: {email}",
                             f"Subject: {subj}", mime, charset, "", text))
 
-        context = ssl.create_default_context()
-        server = sl.SMTP(smtp)
+        server = smtplib.SMTP_SSL(smtp, 465)
         server.ehlo()
-        server.starttls(context=context)
-        server.ehlo()
-        server.login(from_email, from_pas, initial_response_ok=True)
+        server.login(from_email, from_pas)
         server.sendmail(from_email, email, body.encode('utf-8'))
         server.quit()
         print('Suc')
