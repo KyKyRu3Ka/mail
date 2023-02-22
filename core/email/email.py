@@ -1,5 +1,6 @@
 import smtplib
 import os, ssl
+import yagmail
 
 
 def email_start(threads, email, mes, subj):
@@ -40,11 +41,17 @@ def email_attack(email, mes, subj):
         #server.set_debuglevel(1)
         #server.sendmail(from_email, email, body.encode('utf-8'))
         #server.quit()
-        server = smtplib.SMTP_SSL(smtp, 465)
-        server.ehlo()
-        server.login(from_email, from_pas)
-        server.sendmail(from_email, email, body.encode('utf-8'))
-        server.quit()
+        mailsender = smtplib.SMTP_SSL('smtp.mail.yahoo.com', 465)
+        mailsender.debuglevel = 1
+        mailsender.login(from_email, from_pas)
+        mailsender.sendmail(from_email, email, f"""\
+        Date:17/05/2017,2:18
+        From: {from_email}
+        To: {email}
+        Subject: A test
+        testing
+        """)
+        mailsender.quit()
         print('Suc')
     except(EOFError):
         print('Err')
