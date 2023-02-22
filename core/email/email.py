@@ -36,7 +36,10 @@ def email_attack(email, mes, subj):
         text = "Отправкой почты управляет Python!"
         body = "\r\n".join((f"From: {from_email}", f"To: {email}",
                             f"Subject: {subj}", mime, charset, "", text))
-
+        #server = smtplib.SMTP('localhost')
+        #server.set_debuglevel(1)
+        #server.sendmail(from_email, email, body.encode('utf-8'))
+        #server.quit()
         server = smtplib.SMTP_SSL(smtp, 465)
         server.ehlo()
         server.login(from_email, from_pas)
