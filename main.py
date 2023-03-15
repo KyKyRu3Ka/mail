@@ -28,7 +28,10 @@ def StartBotSender():
             smtps = 'smtp.mail.yahoo.com'
         elif em.find('@mail.ru') != -1 or em.find('@bk.ru') != -1:
             smtps = 'smtp.mail.ru'
-
+        else:
+            with open(os.path.abspath('output/Error_accounts.txt'), 'a', encoding='utf-8') as file:
+                file.write(em + ' Нету SMPT\n')
+                pass
         line = em.split(':')
         from_email = line[0]
         from_pas = line[1]

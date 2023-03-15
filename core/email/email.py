@@ -29,7 +29,7 @@ class MailBotSender():
 
                 smtp.sendmail(msg['From'], msg['To'], msg.as_string())
                 smtp.quit()
-            except(EOFError):
+            except:
                 if os.path.isdir('output') != 1:
                     os.makedirs('output')
                     with open(os.path.abspath('output/Error_accounts.txt'), 'w') as f:
