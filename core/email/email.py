@@ -1,14 +1,15 @@
 import os
 
 
-def email_start(threads, email, mes, subj):
+def email_start(threads):
     for _ in range(threads):
-        email_attack(email, mes, subj)
+        email_attack()
 
 
-def email_attack(email, mes, subj):
+def email_attack():
     emails = []
     for_emails = []
+
     with open(os.path.abspath('input/for_email_accounts.txt'), 'r') as file:
         for line in file:
             for_emails.append(line.replace('\n', ''))
