@@ -1,57 +1,42 @@
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.header import Header
 
-def email_attack():
-    emails = []
-    for_emails = []
-    text = ''
-    with open(os.path.abspath('input/Text_email.txt'), 'r', encoding='utf-8')  as file:
-        for line in file:
-            text += line
 
-    with open(os.path.abspath('input/for_email_accounts.txt'), 'r') as file:
-        for line in file:
-            for_emails.append(line.replace('\n', ''))
+class MailBotSender():
+    def __init__(self, from_email, password, to_email, subject, message, smtp):
+        self.from_email = from_email
+        self.password = password
+        self.to_email = to_email
+        self.subject = subject
+        self.message = message
+        self.smtp = smtp
+        self.port = smtplib.SMTP_SSL_PORT
 
-    with open(os.path.abspath('input/email_accounts.txt'), 'r') as file:
-        for line in file:
-            emails.append(line.replace('\n', ''))
+    def emailSender(self):
+            try:
+                debuglevel = 1
 
-    for em, to_email in zip(emails, for_emails):
-        if em.find('@yahoo.com') != -1:
-            smtp_ = 'smtp.mail.yahoo.com'
-        elif em.find('@mail.ru') != -1 or em.find('@bk.ru') != -1:
-            smtp_ = 'smtp.mail.ru'
+                smtp = smtplib.SMTP_SSL(self.smtp, self.port)
+                smtp.set_debuglevel(debuglevel)
+                smtp.login(self.from_email, self.password)
 
-        line = em.split(':')
-        from_email = line[0]
-        from_pas = line[1]
+                msg = MIMEText(str(self.message), 'plain', 'utf-8')
+                msg['Subject'] = Header(self.subject, 'utf-8')
+                msg['From'] = self.from_email
+                msg['To'] = self.to_email
 
-        try:
-            from smtplib import SMTP_SSL, SMTP_SSL_PORT
-            from email.mime.text import MIMEText
-            from email.header import Header
+                smtp.sendmail(msg['From'], msg['To'], msg.as_string())
+                smtp.quit()
+            except(EOFError):
+                if os.path.isdir('output') != 1:
+                    os.makedirs('output')
+                    with open(os.path.abspath('output/Error_accounts.txt'), 'w') as f:
+                        errors = self.from_email + '//' + self.to_email + '\n'
+                        f.write(errors)
 
-            debuglevel = 0
-
-            smtp = SMTP_SSL(smtp_, port=SMTP_SSL_PORT)
-            smtp.set_debuglevel(debuglevel)
-            smtp.login(from_email, from_pas)
-
-            msg = MIMEText(str(text), 'plain', 'utf-8')
-            msg['Subject'] = Header('Заголовок', 'utf-8')
-            msg['From'] = from_email
-            msg['To'] = to_email
-
-            smtp.sendmail(msg['From'], msg['To'], msg.as_string())
-            smtp.quit()
-        except:
-            if os.path.isdir('output') != 1:
-                os.makedirs('output')
-                with open(os.path.abspath('output/Error_accounts.txt'), 'w') as f:
-                    errors = from_email + '//' + to_email + '\n'
-                    f.write(errors)
-
-            else:
-                with open(os.path.abspath('output/Error_accounts.txt'), 'a') as f:
-                    errors = from_email + '//' + to_email + '\n'
-                    f.write(errors)
+                else:
+                    with open(os.path.abspath('output/Error_accounts.txt'), 'a') as f:
+                        errors = self.from_email+ '//' + self.to_email + '\n'
+                        f.write(errors)
