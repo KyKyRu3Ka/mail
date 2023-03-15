@@ -21,8 +21,6 @@ def email_attack():
             smtp_ = 'smtp.mail.yahoo.com'
         elif em.find('@mail.ru') != -1 or em.find('@bk.ru') != -1:
             smtp_ = 'smtp.mail.ru'
-        else:
-            smtp_ = 'smtp.rembler.ru'
 
         line = em.split(':')
         from_email = line[0]
