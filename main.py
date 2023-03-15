@@ -1,7 +1,7 @@
 from core.email.email import *
 
-target = 'leksikov678@yahoo.com'
 threads = 1
+target = 'leksikov678@yahoo.com'
 message = 'Good Day!'
 subj = 'Alert'
 if __name__ == "__main__":

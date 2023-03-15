@@ -1,6 +1,4 @@
-import smtplib
-import os, ssl
-import yagmail
+import os
 
 
 def email_start(threads, email, mes, subj):
@@ -14,44 +12,49 @@ def email_attack(email, mes, subj):
     with open(os.path.abspath('input/email_accounts.txt'), 'r') as file:
         for line in file:
             emails.append(line.replace('\n', ''))
-
     for em in emails:
         if em.find('@yahoo.com') != -1:
-            smtp = 'smtp.mail.yahoo.com'
-            port = 465
+            smtp_ = 'smtp.mail.yahoo.com'
         elif em.find('@mail.ru') != -1:
-            smtp = 'smtp.mail.ru'
-            port = 587
+            smtp_ = 'smtp.mail.ru'
+        elif em.find('@bk.ru') != -1:
+            smtp_ = 'smtp.mail.ru'
         else:
-            smtp = 'smtp.rembler.ru'
+            smtp_ = 'smtp.rembler.ru'
 
-    line = em.split(':')
-    from_email = line[0]
-    from_pas = line[1]
-    print(from_email)
-    print(from_pas)
+        line = em.split(':')
+        from_email = line[0]
+        from_pas = line[1]
+        try:
+            from smtplib import SMTP_SSL, SMTP_SSL_PORT
+            import datetime
 
-    try:
-        charset = 'Content-Type: text/plain; charset=utf-8'
-        mime = 'MIME-Version: 1.0'
-        text = "Отправкой почты управляет Python!"
-        body = "\r\n".join((f"From: {from_email}", f"To: {email}",
-                            f"Subject: {subj}", mime, charset, "", text))
-        #server = smtplib.SMTP('localhost')
-        #server.set_debuglevel(1)
-        #server.sendmail(from_email, email, body.encode('utf-8'))
-        #server.quit()
-        mailsender = smtplib.SMTP_SSL('smtp.mail.yahoo.com', 465)
-        mailsender.debuglevel = 1
-        mailsender.login(from_email, from_pas)
-        mailsender.sendmail(from_email, email, f"""\
-        Date:17/05/2017,2:18
-        From: {from_email}
-        To: {email}
-        Subject: A test
-        testing
-        """)
-        mailsender.quit()
-        print('Suc')
-    except(EOFError):
-        print('Err')
+            debuglevel = 0
+
+            smtp = SMTP_SSL(smtp_, port=SMTP_SSL_PORT)
+            smtp.set_debuglevel(debuglevel)
+            smtp.login(from_email, from_pas)
+
+            from_addr = from_email
+            to_addr = "leksikov678@gmail.co"
+
+            subj = "Дароу!"
+            date = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
+
+            message_text = "Дароу\nЭто сообщение отправлено через бота!\n\nПока!\n"
+
+            msg = "From: %s\nTo: %s\nSubject: %s\nDate: %s\n\n%s"\
+            % (from_addr, to_addr, subj, date, message_text)
+
+            smtp.sendmail(from_addr, to_addr, msg)
+            smtp.quit()
+        except:
+            if os.path.isdir('output') != 1:
+                os.makedirs('output')
+                with open(os.path.abspath('output/Error_accounts.txt'), 'w') as f:
+                    errors = from_email + '//' + to_addr + '\n'
+                    f.write(errors)
+            else:
+                with open(os.path.abspath('output/Error_accounts.txt'), 'a') as f:
+                    errors = from_email + '//' + to_addr + '\n'
+                    f.write(errors)
