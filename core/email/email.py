@@ -21,9 +21,7 @@ def email_attack():
     for em, to_email in zip(emails, for_emails):
         if em.find('@yahoo.com') != -1:
             smtp_ = 'smtp.mail.yahoo.com'
-        elif em.find('@mail.ru') != -1:
-            smtp_ = 'smtp.mail.ru'
-        elif em.find('@bk.ru') != -1:
+        elif em.find('@mail.ru') != -1 or em.find('@bk.ru') != -1:
             smtp_ = 'smtp.mail.ru'
         else:
             smtp_ = 'smtp.rembler.ru'
