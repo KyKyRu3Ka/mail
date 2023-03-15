@@ -1,14 +1,12 @@
 import os
 
-
-def email_start(threads):
-    for _ in range(threads):
-        email_attack()
-
-
 def email_attack():
     emails = []
     for_emails = []
+    text = ''
+    with open(os.path.abspath('input/Text_email.txt'), 'r', encoding='utf-8')  as file:
+        for line in file:
+            text += line
 
     with open(os.path.abspath('input/for_email_accounts.txt'), 'r') as file:
         for line in file:
@@ -41,7 +39,7 @@ def email_attack():
             smtp.set_debuglevel(debuglevel)
             smtp.login(from_email, from_pas)
 
-            msg = MIMEText('Текс', 'plain', 'utf-8')
+            msg = MIMEText(str(text), 'plain', 'utf-8')
             msg['Subject'] = Header('Заголовок', 'utf-8')
             msg['From'] = from_email
             msg['To'] = to_email
