@@ -1,42 +1,41 @@
-from core.email.email import MailBotSender
-import os
+from env import token
+import asyncio
+import logging
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram import Bot, Dispatcher, types
+from aiogram.dispatcher.filters import Command, Text
 
+# Включаем логирование, чтобы не пропустить важные сообщения
+logging.basicConfig(level=logging.INFO)
+# Объект бота
+bot = Bot(token)
+# Диспетчер
+dp = Dispatcher(bot)
 
-def StartBotSender():
+# Хэндлер на команду /start
+@dp.message_handler(Command("start"))
+async def cmd_start(message: types.Message):
+    btn_1 = InlineKeyboardButton('Готово', callback_data='button1')
+    button_1 = InlineKeyboardMarkup().add(btn_1)
+    await message.answer("Привет! Я бот для рассылок почты!\n"
+                         "Перед началом работы со мной, следует создать пароль для приложения по которому"
+                         "будет заходить бот на вашу почту!\n"
+                         "1) Для Yahoo https://login.yahoo.com/account/security\n"
+                         "2) Для Mail https://help.mail.ru/mail/security/protection/external\n"
+                         "Полная документация как выполнить данные операции будет по ссылке:"
+                         " https://docs.google.com/document/d/1HVv1lPkywRlX-EmdsjAwDUG7C3aag4TuJpX4Ld53RcU/edit\n"
+                         "Если у вас все готово, нажмите на кнопку 'Готово'!"
+                         , reply_markup=button_1)
 
-    smtps = ''
-    from_emails = []
-    to_emails = []
-    messages = ''
-    subject = ''
+@dp.callback_query_handler(Text("button1"))
+async def process_callback_button1(callback_query: types.CallbackQuery):
+    await bot.answer_callback_query(callback_query.id)
+    await bot.send_message(callback_query.from_user.id, 'Хорошо, сейчас я вам вышлю файлы, вы их должны заполнить по'
+                         ' примеру: https://disc.google.com/')
 
-    with open(os.path.abspath('input/Text_email.txt'), 'r', encoding='utf-8') as file:
-        subject = next(file).strip()
-        for line in file:
-            messages += line
+# Запуск процесса поллинга новых апдейтов
+async def main():
+    await dp.start_polling(bot)
 
-    with open(os.path.abspath('input/for_email_accounts.txt'), 'r') as file:
-        for line in file:
-            to_emails.append(line.replace('\n', ''))
-
-    with open(os.path.abspath('input/email_accounts.txt'), 'r') as file:
-        for line in file:
-            from_emails.append(line.replace('\n', ''))
-
-    for em, to_email1 in zip(from_emails, to_emails):
-        if em.find('@yahoo.com') != -1:
-            smtps = 'smtp.mail.yahoo.com'
-        elif em.find('@mail.ru') != -1 or em.find('@bk.ru') != -1:
-            smtps = 'smtp.mail.ru'
-        else:
-            with open(os.path.abspath('output/Error_accounts.txt'), 'a', encoding='utf-8') as file:
-                file.write(em + ' Нету SMPT\n')
-                pass
-        line = em.split(':')
-        from_email = line[0]
-        from_pas = line[1]
-        to_email = to_email1
-        bot = MailBotSender(from_email, from_pas, to_email, subject, messages, smtps)
-        bot.emailSender()
-
-StartBotSender()
+if __name__ == "__main__":
+    asyncio.run(main())
