@@ -80,12 +80,6 @@ async def process_callback_button1(callback_query: types.CallbackQuery):
             'Проверьте, отправили ли вы все 3 файла?'
         )
     else:
-        print(email_accounts_txt.keys())
-        print(for_email_accounts_txt.keys())
-        print(text_emails_txt.keys())
-        print(from_id in email_accounts_txt.keys() and
-              from_id in for_email_accounts_txt.keys() and
-              from_id in text_emails_txt.keys())
         await bot.send_message(
             callback_query.from_user.id,
             'Отлично'
