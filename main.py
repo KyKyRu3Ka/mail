@@ -66,55 +66,62 @@ async def process_callback_button1(callback_query: types.CallbackQuery):
     )
 
 
+@dp.message_handler(content_types=ContentTypes.DOCUMENT)
+async def doc_handler(message: Message):
+    if document := message.document:
+        destination_file = "input/" + f'{document.file_name}'
+
+        from_user = f"{message.from_user.id}"
+        documents = f'{document.file_name}'
+
+        if from_user not in email_accounts_txt.keys()\
+                and documents == 'email_accounts.txt':
+            await document.download(destination_file=destination_file)
+            await message.answer(
+             documents + ' поймаль'
+            )
+            email_accounts_txt[from_user] = documents
+
+        elif from_user not in for_email_accounts_txt.keys()\
+                and documents == 'for_email_accounts.txt':
+            await document.download(destination_file=destination_file)
+            await message.answer(
+                documents + ' поймаль'
+            )
+            for_email_accounts_txt[from_user] = documents
+
+        elif from_user not in text_emails_txt.keys()\
+                and documents == 'Text_email.txt':
+            await document.download(destination_file=destination_file)
+            await message.answer(
+                documents + ' поймаль'
+            )
+            text_emails_txt[from_user] = documents
+
+        else:
+            await message.answer(
+                f'{document.file_name}' + ' уже есть у меня!'
+            )
+
+
 @dp.callback_query_handler(Text("button2"))
 async def process_callback_button1(callback_query: types.CallbackQuery):
     await bot.answer_callback_query(callback_query.id)
     from_id = f'{callback_query.from_user.id}'
     print(f'{callback_query.from_user.id}')
-    if f'{callback_query.from_user.id}' not in email_accounts_txt.keys() and\
-            f'{callback_query.from_user.id}' not in for_email_accounts_txt.keys() and\
-            f'{callback_query.from_user.id}' not in text_emails_txt.keys():
+    if from_id in email_accounts_txt.keys()\
+            and from_id in for_email_accounts_txt.keys()\
+            and from_id in text_emails_txt.keys():
+        await bot.send_message(
+            callback_query.from_user.id,
+            'Отлично!'
+        )
+    else:
         await bot.send_message(
             callback_query.from_user.id,
             'У меня нету некоторых файлов!\n'
             'Проверьте, отправили ли вы все 3 файла?'
         )
-    else:
-        await bot.send_message(
-            callback_query.from_user.id,
-            'Отлично'
-        )
-
-
-@dp.message_handler(content_types=ContentTypes.DOCUMENT)
-async def doc_handler(message: Message):
-    if document := message.document:
-        destination_file = "input/" + f'{document.file_name}'
-        if f"{message.from_user.id}" not in email_accounts_txt.keys():
-            await document.download(destination_file=destination_file)
-            await message.answer(
-             f'{document.file_name}'+' поймаль'
-            )
-            email_accounts_txt[f'{message.from_user.id}'] = f'{document.file_name}'
-            print(email_accounts_txt.keys())
-        elif f"{message.from_user.id}" not in for_email_accounts_txt.keys():
-            await document.download(destination_file=destination_file)
-            await message.answer(
-                f'{document.file_name}' + ' поймаль'
-            )
-            for_email_accounts_txt[f'{message.from_user.id}'] = f'{document.file_name}'
-            print(for_email_accounts_txt.keys())
-        elif f"{message.from_user.id}" not in text_emails_txt.keys():
-            await document.download(destination_file=destination_file)
-            await message.answer(
-                f'{document.file_name}' + ' поймаль'
-            )
-            text_emails_txt[f'{message.from_user.id}'] = f'{document.file_name}'
-            print(text_emails_txt.keys())
-        else:
-            await message.answer(
-                f'{document.file_name}' + ' уже есть у меня.'
-            )
 # Запуск процесса поллинга новых апдейтов
 
 
